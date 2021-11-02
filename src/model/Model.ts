@@ -14,6 +14,7 @@ import { HasOne } from './attributes/relations/HasOne'
 import { BelongsTo } from './attributes/relations/BelongsTo'
 import { HasMany } from './attributes/relations/HasMany'
 import { HasManyBy } from './attributes/relations/HasManyBy'
+import { MorphTo } from './attributes/relations/MorphTo'
 
 export type ModelFields = Record<string, Attribute>
 export type ModelSchemas = Record<string, ModelFields>
@@ -240,6 +241,26 @@ export class Model {
   }
 
   /**
+   * Create a new MorphTo relation instance.
+   */
+   static morphTo(
+    //related: typeof Model,
+    id: string,
+    type: string,
+    localKey?: string
+  ): MorphTo {
+    // TODO figure out how to determin the model using the provided type
+    // We can't know the related model(s) ahead of time.
+    // We use the type field (entity) to determine the model
+    //const related = '';
+    const instance = this.newRawInstance()
+
+    localKey = localKey ?? instance.$getLocalKey()
+
+    return new MorphTo(instance, id, type, localKey)
+  }
+
+  /**
    * Get the constructor for this model.
    */
   $self(): typeof Model {
@@ -250,6 +271,7 @@ export class Model {
    * Get the database instance.
    */
   $database(): Database {
+    console.log('_database', this._database)
     assert(this._database !== undefined, [
       'A Vuex Store instance is not injected into the model instance.',
       'You might be trying to instantiate the model directly. Please use',

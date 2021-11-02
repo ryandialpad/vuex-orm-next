@@ -54,6 +54,13 @@ export class Schema {
   }
 
   /**
+   * Create an union schema for the given model.
+   */
+   union(callback: Normalizr.SchemaFunction): Normalizr.Union {
+    return new Normalizr.Union(this.schemas, callback)
+  }
+
+  /**
    * Create a new normalizr entity.
    */
   private newEntity(model: Model, parent: Model): Normalizr.Entity {

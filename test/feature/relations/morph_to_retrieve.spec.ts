@@ -60,8 +60,24 @@ describe('feature/relations/morph_to_retrieve', () => {
 
     fillState(store, MORPH_TO_ENTITIES)
 
+    // TODO: move this logic to helper
+    store.$database.register(Image.newRawInstance());
+    store.$database.register(User.newRawInstance());
+    store.$database.register(Post.newRawInstance());
+
+    console.log('models', store.$database.models)
+    console.log('schemas', store.$database.schemas)
+    console.log('entities', store.state.entities)
+    console.log('images', store.state.entities.images)
+
+    //const userImage2 = store.$repo(Image).where('id', 1).first()!
     const userImage = store.$repo(Image).with('imageable').first()!
     const postImage = store.$repo(Image).where('id', 2).with('imageable').first()!
+
+    //console.log('userImage2', userImage2)
+    //console.log('userImage', userImage)
+    //console.log('postImage', postImage)
+    //console.log('store', store)
 
     // Assert User Image
     expect(userImage).toBeInstanceOf(Image)
@@ -71,7 +87,7 @@ describe('feature/relations/morph_to_retrieve', () => {
       url: '/profile.jpg',
       imageableId: 1,
       imageableType: 'users',
-      imagable: { id: 1, name: 'John Doe' }
+      imageable: { id: 1, name: 'John Doe' }
     })
 
     // Assert Post Image
@@ -82,7 +98,7 @@ describe('feature/relations/morph_to_retrieve', () => {
       url: '/post.jpg',
       imageableId: 1,
       imageableType: 'posts',
-      imagable: { id: 1, title: 'Hello, world!' }
+      imageable: { id: 1, title: 'Hello, world!' }
     })
   })
 
@@ -126,7 +142,7 @@ describe('feature/relations/morph_to_retrieve', () => {
       }
     })
 
-    const image = store.$repo(Image).with('author').first()!
+    const image = store.$repo(Image).with('imageable').first()!
 
     expect(image).toBeInstanceOf(Image)
     assertModel(image, {
@@ -134,7 +150,7 @@ describe('feature/relations/morph_to_retrieve', () => {
       url: '/profile.jpg',
       imageableId: null,
       imageableType: null,
-      imagable: null
+      imageable: null
     })
   })
 })
