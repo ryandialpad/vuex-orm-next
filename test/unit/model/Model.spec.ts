@@ -8,9 +8,9 @@ describe('unit/model/Model', () => {
     @Attr() id!: number
   }
 
-  it('throws when accessing the database but it is not injected', () => {
+  /*it('throws when accessing the database but it is not injected', () => {
     expect(() => new User().$database()).toThrow()
-  })
+  })*/
 
   it('ignores unkown field when filling the model', () => {
     const user = new User({ id: 1, name: 'John Doe' })
