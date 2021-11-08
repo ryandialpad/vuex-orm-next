@@ -1,7 +1,7 @@
 import { isNullish, isArray, assert } from '../support/Utils'
 import { Element, Item, Collection } from '../data/Data'
 import { Database } from '../database/Database'
-import { Query } from '../query/Query'
+//import { Query } from '../query/Query'
 import { NonEnumerable } from './decorators/NonEnumerable'
 import { Attribute } from './attributes/Attribute'
 import { Attr } from './attributes/types/Attr'
@@ -270,8 +270,7 @@ export class Model {
   /**
    * Get the database instance.
    */
-  $database(): Database {
-    console.log('_database', this._database)
+  /*$database(): Database {
     assert(this._database !== undefined, [
       'A Vuex Store instance is not injected into the model instance.',
       'You might be trying to instantiate the model directly. Please use',
@@ -279,16 +278,16 @@ export class Model {
     ])
 
     return this._database
-  }
+  }*/
 
   /**
    * Set the database instance.
    */
-  $setDatabase(database: Database): this {
+  /*$setDatabase(database: Database): this {
     this._database = database
 
     return this
-  }
+  }*/
 
   /**
    * Get the entity for this model.
@@ -320,7 +319,7 @@ export class Model {
     const self = this.$self()
     const model = new self(attributes, options) as this
 
-    model.$setDatabase(this.$database())
+    //model.$setDatabase(this.$database())
 
     return model
   }
@@ -328,9 +327,9 @@ export class Model {
   /**
    * Create a new query instance.
    */
-  $query(): Query<this> {
+  /*$query(): Query<this> {
     return new Query(this.$database(), this)
-  }
+  }*/
 
   /**
    * Bootstrap this model.
@@ -511,25 +510,25 @@ export class Model {
   /**
    * Delete the model from the database.
    */
-  $delete(): boolean {
+  /*$delete(): boolean {
     const key = this.$getKeyName()
 
     return isArray(key)
       ? this.$deleteByCompositeKeyName(key)
       : this.$deleteByKeyName(key)
-  }
+  }*/
 
   /**
    * Delete the model from the database by ID.
    */
-  protected $deleteByKeyName(key: string): boolean {
+  /*protected $deleteByKeyName(key: string): boolean {
     return !!this.$query().destroy(this[key])
-  }
+  }*/
 
   /**
    * Delete the model from the database by composite key.
    */
-  protected $deleteByCompositeKeyName(keys: string[]): boolean {
+  /*protected $deleteByCompositeKeyName(keys: string[]): boolean {
     const query = this.$query()
 
     keys.forEach((key) => {
@@ -537,7 +536,7 @@ export class Model {
     })
 
     return query.delete().length > 0
-  }
+  }*/
 
   /**
    * Serialize this model, or the given model, as POJO.

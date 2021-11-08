@@ -76,12 +76,13 @@ export class MorphTo extends Relation {
    * Set the constraints for an eager load of the relation. TODO
    */
   addEagerConstraints(query: Query, models: Collection): void {
-    console.log('query', query)
-    console.log('models', models)
+    console.log('addEagerConstraints query', query)
+    console.log('addEagerConstraints models', models)
     const types = this.getTypes(models)
-    const database = this.parent.$database();
+    const database = query.database;
     console.log('types', types)
     //console.log('types[0]', types[0])
+
     //console.log('model', database.getModel(types[0]))
 
     //const relatedQuery = new Query(database, database.getModel(types[0]))
@@ -89,17 +90,62 @@ export class MorphTo extends Relation {
     //console.log('relatedQuery', relatedQuery)
     //console.log('relatedQuery get', relatedQuery.get())
 
-    const relations = types.reduce((related, type) => {
+    // testing query restrictions
+    console.log('query where', query.where(this.id, '1').get())
+
+    // Gather relations
+    const relatedTypes = {};
+    models.forEach(model => {
+      const type = model[this.type];
+      const key = model[this.localKey];
+      console.log('type', type)
+      console.log('key', key)
+
+      if (!relatedTypes[type]) {
+        relatedTypes[type] = [key]
+      } else if (!relatedTypes[type].includes(key)) {
+        relatedTypes[type].push(key)
+      }
+    });
+    console.log('relatedTypes', relatedTypes)
+
+    // Set relations
+    const relations = {};
+    Object.keys(relatedTypes).forEach(type => {
+      //const relatedQuery = new Query(database, database.getModel(type))
+      relations[type] = new Query(database, database.getModel(type))
+      /*const relatedIds = relatedTypes[type];
+      relatedQuery.whereIn(this.localKey, relatedIds)
+      const related = relatedQuery.get()
+      console.log('related', related)*/
+    });
+
+    console.log('relations', relations)
+
+    models.forEach(model => {
+      const type = model[this.type]
+      const id = model[this.id]
+      const related = relations[type].find(id)
+      
+      console.log('related', related)
+      model['morphToRelated'] = related
+      // TODO: figure out how we can retrieve relation
+      /*related
+        ? model.$setRelation(relation, related)
+        : model.$setRelation(relation, null)*/
+    });
+
+    /*const relations = types.reduce((related, type) => {
       console.log('related', related)
       console.log('type', type)
       const relatedQuery = new Query(database, database.getModel(type))
       console.log('relatedQuery', relatedQuery)
 
-      //related[type] = this.mapSingleRelations(relatedQuery.get(), '$id')
+      related[type] = this.mapSingleRelations(relatedQuery.get(), this.localKey)
 
       return related
     }, {})
-    console.log('relations', relations)
+    console.log('addEagerConstraints relations', relations)*/
     //query.where(this.type as any, this.parent.$entity())
     //query.whereIn(this.id as any, this.getKeys(models, this.localKey))
   }
@@ -108,33 +154,33 @@ export class MorphTo extends Relation {
    * Match the eagerly loaded results to their respective parents. TODO
    */
   match(relation: string, models: Collection, results: Collection): void {
-    console.log('relation', relation)
-    console.log('models', models)
-    console.log('results', results)
-    const database = this.parent.$database();
+    console.log('match relation', relation)
+    console.log('match models', models)
+    console.log('match results', results)
+    //const database = this.parent.$database();
     const dictionary = this.buildDictionary(results)
-    console.log('dictionary', dictionary)
+    console.log('match dictionary', dictionary)
 
     models.forEach((model) => {
-      const key = model[this.localKey]
+      /*const key = model[this.localKey]
       const relatedId = model[this.id]
       const relatedType = model[this.type]
-      console.log('key', key)
-      console.log('relatedId', relatedId)
-      console.log('relatedType', relatedType)
+      console.log('match key', key)
+      console.log('match relatedId', relatedId)
+      console.log('match relatedType', relatedType)*/
       // TODO: figure out a better approach to get the related model using it's type that is connected to the parent's
       //       database
-      const relatedModel = database.getModel(relatedType).$setDatabase(database)
+      /*const relatedModel = database.getModel(relatedType).$setDatabase(database)
       console.log('relatedModel', relatedModel)
       const related = relatedModel.$query().find(relatedId)
-      console.log('related', related)
+      console.log('related', related)*/
 
       /*
       console.log('dictionary[key]', dictionary[key])
       console.log('dictionary[key][0]', dictionary[key][0])*/
 
-      related
-        ? model.$setRelation(relation, related)
+      model['morphToRelated']
+        ? model.$setRelation(relation, model['morphToRelated']) && delete model['morphToRelated']
         : model.$setRelation(relation, null)
     })
     console.log('models updated', models)
@@ -169,4 +215,19 @@ export class MorphTo extends Relation {
       return types
     }, [] as string[])
   }
+
+  /**
+   * Create a new indexed map for the single relation by specified key.
+   */
+    mapSingleRelations(collection: Collection, key: string): Map<string, any> {
+      const relations = new Map<string, any>()
+  
+      collection.forEach((record) => {
+        const id = record[key]
+  
+        !relations.get(id) && relations.set(id, record)
+      })
+  
+      return relations
+    }
 }

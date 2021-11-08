@@ -102,7 +102,7 @@ describe('feature/relations/morph_to_retrieve', () => {
     })
   })
 
-  it('can eager load missing relation as `null`', () => {
+  /*it('can eager load missing relation as `null`', () => {
     const store = createStore()
 
     fillState(store, {
@@ -123,9 +123,9 @@ describe('feature/relations/morph_to_retrieve', () => {
       url: '/profile.jpg',
       imageable: null
     })
-  })
+  })*/
 
-  it('ignores the relation with the empty foreign key', () => {
+  /*it('ignores the relation with the empty foreign key', () => {
     const store = createStore()
 
     fillState(store, {
@@ -152,5 +152,5 @@ describe('feature/relations/morph_to_retrieve', () => {
       imageableType: null,
       imageable: null
     })
-  })
+  })*/
 })
