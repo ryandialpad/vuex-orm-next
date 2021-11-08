@@ -49,7 +49,7 @@ export class Repository<M extends Model = Model> {
   initialize(model?: ModelConstructor<M>): this {
     // If there's a model passed in, just use that and return immediately.
     if (model) {
-      this.model = model.newRawInstance() /*.$setDatabase(this.database)*/
+      this.model = model.newRawInstance()
 
       return this
     }
@@ -60,7 +60,7 @@ export class Repository<M extends Model = Model> {
     // property and instantiate that.
     if (this.use) {
       this.model =
-        this.use.newRawInstance() as M /*.$setDatabase(this.database)*/
+        this.use.newRawInstance() as M
 
       return this
     }

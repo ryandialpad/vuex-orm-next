@@ -85,7 +85,7 @@ export class Query<M extends Model = Model> {
   protected newQueryForRelation(relation: Relation): Query<Model> {
     return new Query(
       this.database,
-      relation.getRelated() /*.$setDatabase(this.database)*/
+      relation.getRelated()
     )
   }
 
