@@ -59,8 +59,7 @@ export class Repository<M extends Model = Model> {
     // In this case, we'll check if the user has set model to the `use`
     // property and instantiate that.
     if (this.use) {
-      this.model =
-        this.use.newRawInstance() as M
+      this.model = this.use.newRawInstance() as M
 
       return this
     }
